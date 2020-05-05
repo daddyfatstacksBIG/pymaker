@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from pprint import pformat
-from typing import Optional, List
+from typing import List, Optional
 
 from pymaker import Address
 from pymaker.numeric import Wad

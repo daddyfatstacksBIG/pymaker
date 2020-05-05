@@ -21,38 +21,27 @@ import re
 from typing import Dict, List, Optional
 
 import pkg_resources
-from pymaker.auctions import Flapper, Flopper, Flipper
-from web3 import Web3, HTTPProvider
 
 from pymaker import Address
 from pymaker.approval import directly, hope_directly
+from pymaker.auctions import Flapper, Flipper, Flopper
 from pymaker.auth import DSGuard
+from pymaker.cdpmanager import CdpManager
+from pymaker.dss import (Cat, Collateral, DaiJoin, GemJoin, GemJoin5, Ilk, Jug,
+                         Pot, Spotter, Vat, Vow)
 from pymaker.etherdelta import EtherDelta
-from pymaker.dss import (
-    Cat,
-    Collateral,
-    DaiJoin,
-    GemJoin,
-    GemJoin5,
-    Ilk,
-    Jug,
-    Pot,
-    Spotter,
-    Vat,
-    Vow,
-)
-from pymaker.proxy import ProxyRegistry, DssProxyActionsDsr
 from pymaker.feed import DSValue
 from pymaker.gas import DefaultGasPrice
-from pymaker.governance import DSPause, DSChief
-from pymaker.numeric import Wad, Ray
+from pymaker.governance import DSChief, DSPause
+from pymaker.numeric import Ray, Wad
 from pymaker.oasis import MatchingMarket
 from pymaker.oracles import OSM
-from pymaker.sai import Tub, Tap, Top, Vox
-from pymaker.shutdown import ShutdownModule, End
-from pymaker.token import DSToken, DSEthToken
+from pymaker.proxy import DssProxyActionsDsr, ProxyRegistry
+from pymaker.sai import Tap, Top, Tub, Vox
+from pymaker.shutdown import End, ShutdownModule
+from pymaker.token import DSEthToken, DSToken
 from pymaker.vault import DSVault
-from pymaker.cdpmanager import CdpManager
+from web3 import HTTPProvider, Web3
 
 
 def deploy_contract(

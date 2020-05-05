@@ -16,14 +16,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pytest
-
-from pymaker.gas import (
-    DefaultGasPrice,
-    FixedGasPrice,
-    GasPrice,
-    GeometricGasPrice,
-    IncreasingGasPrice,
-)
+from pymaker.gas import (DefaultGasPrice, FixedGasPrice, GasPrice,
+                         GeometricGasPrice, IncreasingGasPrice)
 
 
 class TestGasPrice:

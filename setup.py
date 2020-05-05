@@ -6,9 +6,10 @@ https://github.com/pypa/sampleproject
 https://github.com/pypa/sampleproject/blob/master/setup.py
 """
 
-# Always prefer setuptools over distutils
-from setuptools import setup, find_packages
 from os import path
+
+# Always prefer setuptools over distutils
+from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 

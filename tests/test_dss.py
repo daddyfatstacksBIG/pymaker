@@ -16,20 +16,21 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import pytest
 import time
 from datetime import datetime
-from web3 import Web3
 
+import pytest
 from pymaker import Address
 from pymaker.approval import hope_directly
 from pymaker.deployment import DssDeployment
-from pymaker.dss import Collateral, DaiJoin, GemJoin, GemJoin5, Ilk, Urn, Vat, Vow
+from pymaker.dss import (Collateral, DaiJoin, GemJoin, GemJoin5, Ilk, Urn, Vat,
+                         Vow)
 from pymaker.feed import DSValue
-from pymaker.numeric import Wad, Ray, Rad
+from pymaker.numeric import Rad, Ray, Wad
 from pymaker.oracles import OSM
-from pymaker.token import DSToken, DSEthToken, ERC20Token
+from pymaker.token import DSEthToken, DSToken, ERC20Token
 from tests.conftest import validate_contracts_loaded
+from web3 import Web3
 
 
 @pytest.fixture

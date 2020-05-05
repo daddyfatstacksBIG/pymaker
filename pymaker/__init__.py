@@ -26,21 +26,19 @@ from functools import total_ordering, wraps
 from threading import Lock
 from typing import Optional
 
-import eth_utils
 import pkg_resources
-from hexbytes import HexBytes
 
-from web3 import Web3
-from web3._utils.contracts import get_function_info, encode_abi
-from web3._utils.events import get_event_data
-from web3.exceptions import TransactionNotFound
-
+import eth_utils
 from eth_abi.codec import ABICodec
 from eth_abi.registry import registry as default_registry
-
+from hexbytes import HexBytes
 from pymaker.gas import DefaultGasPrice, GasPrice
 from pymaker.numeric import Wad
-from pymaker.util import synchronize, bytes_to_hexstring, is_contract_at
+from pymaker.util import bytes_to_hexstring, is_contract_at, synchronize
+from web3 import Web3
+from web3._utils.contracts import encode_abi, get_function_info
+from web3._utils.events import get_event_data
+from web3.exceptions import TransactionNotFound
 
 filter_threads = []
 node_is_parity = None

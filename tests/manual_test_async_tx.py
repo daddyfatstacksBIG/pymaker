@@ -21,13 +21,12 @@ import sys
 import threading
 import time
 
-from web3 import Web3, HTTPProvider
-
 from pymaker import Address
 from pymaker.deployment import DssDeployment
 from pymaker.gas import FixedGasPrice
 from pymaker.keys import register_keys
 from pymaker.numeric import Wad
+from web3 import HTTPProvider, Web3
 
 logging.basicConfig(
     format="%(asctime)-15s %(levelname)-8s %(message)s", level=logging.DEBUG

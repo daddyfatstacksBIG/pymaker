@@ -19,9 +19,8 @@ import asyncio
 import logging
 import threading
 
-from web3 import Web3
-
 from pymaker.numeric import Wad
+from web3 import Web3
 
 
 def chain(web3: Web3) -> str:
