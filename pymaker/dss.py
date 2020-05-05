@@ -47,19 +47,23 @@ class Ilk:
     different risk parameters.
     """
 
-    def __init__(self, name: str, rate: Optional[Ray] = None,
-                 ink: Optional[Wad] = None,
-                 art: Optional[Wad] = None,
-                 spot: Optional[Ray] = None,
-                 line: Optional[Rad] = None,
-                 dust: Optional[Rad] = None):
-        assert (isinstance(name, str))
-        assert (isinstance(rate, Ray) or (rate is None))
-        assert (isinstance(ink, Wad) or (ink is None))
-        assert (isinstance(art, Wad) or (art is None))
-        assert (isinstance(spot, Ray) or (spot is None))
-        assert (isinstance(line, Rad) or (line is None))
-        assert (isinstance(dust, Rad) or (dust is None))
+    def __init__(
+        self,
+        name: str,
+        rate: Optional[Ray] = None,
+        ink: Optional[Wad] = None,
+        art: Optional[Wad] = None,
+        spot: Optional[Ray] = None,
+        line: Optional[Rad] = None,
+        dust: Optional[Rad] = None,
+    ):
+        assert isinstance(name, str)
+        assert isinstance(rate, Ray) or (rate is None)
+        assert isinstance(ink, Wad) or (ink is None)
+        assert isinstance(art, Wad) or (art is None)
+        assert isinstance(spot, Ray) or (spot is None)
+        assert isinstance(line, Rad) or (line is None)
+        assert isinstance(dust, Rad) or (dust is None)
 
         self.name = name
         self.rate = rate
@@ -74,7 +78,7 @@ class Ilk:
 
     @staticmethod
     def fromBytes(ilk: bytes):
-        assert (isinstance(ilk, bytes))
+        assert isinstance(ilk, bytes)
 
         name = Web3.toText(ilk.strip(bytes(1)))
         return Ilk(name)
@@ -82,30 +86,32 @@ class Ilk:
     def __eq__(self, other):
         assert isinstance(other, Ilk)
 
-        return (self.name == other.name) \
-            and (self.rate == other.rate) \
-            and (self.ink == other.ink) \
-            and (self.art == other.art) \
-            and (self.spot == other.spot) \
-            and (self.line == other.line) \
+        return (
+            (self.name == other.name)
+            and (self.rate == other.rate)
+            and (self.ink == other.ink)
+            and (self.art == other.art)
+            and (self.spot == other.spot)
+            and (self.line == other.line)
             and (self.dust == other.dust)
+        )
 
     def __repr__(self):
-        repr = ''
+        repr = ""
         if self.rate:
-            repr += f' rate={self.rate}'
+            repr += f" rate={self.rate}"
         if self.ink:
-            repr += f' Ink={self.ink}'
+            repr += f" Ink={self.ink}"
         if self.art:
-            repr += f' Art={self.art}'
+            repr += f" Art={self.art}"
         if self.spot:
-            repr += f' spot={self.spot}'
+            repr += f" spot={self.spot}"
         if self.line:
-            repr += f' line={self.line}'
+            repr += f" line={self.line}"
         if self.dust:
-            repr += f' dust={self.dust}'
+            repr += f" dust={self.dust}"
         if repr:
-            repr = f'[{repr.strip()}]'
+            repr = f"[{repr.strip()}]"
 
         return f"Ilk('{self.name}'){repr}"
 
@@ -115,7 +121,9 @@ class Urn:
     of the CDP holder.
     """
 
-    def __init__(self, address: Address, ilk: Ilk = None, ink: Wad = None, art: Wad = None):
+    def __init__(
+        self, address: Address, ilk: Ilk = None, ink: Wad = None, art: Wad = None
+    ):
         assert isinstance(address, Address)
         assert isinstance(ilk, Ilk) or (ilk is None)
         assert isinstance(ink, Wad) or (ink is None)
@@ -128,7 +136,7 @@ class Urn:
 
     def toBytes(self):
         addr_str = self.address.address
-        return Web3.toBytes(hexstr='0x' + addr_str[2:].zfill(64))
+        return Web3.toBytes(hexstr="0x" + addr_str[2:].zfill(64))
 
     @staticmethod
     def fromBytes(urn: bytes):
@@ -143,15 +151,15 @@ class Urn:
         return (self.address == other.address) and (self.ilk == other.ilk)
 
     def __repr__(self):
-        repr = ''
+        repr = ""
         if self.ilk:
-            repr += f'[{self.ilk.name}]'
+            repr += f"[{self.ilk.name}]"
         if self.ink:
-            repr += f' ink={self.ink}'
+            repr += f" ink={self.ink}"
         if self.art:
-            repr += f' art={self.art}'
+            repr += f" art={self.art}"
         if repr:
-            repr = f'[{repr.strip()}]'
+            repr = f"[{repr.strip()}]"
         return f"Urn('{self.address}'){repr}"
 
 
@@ -166,11 +174,14 @@ class Join(Contract):
         self._token: DSToken = None
 
     def approve(self, approval_function, source: Address):
-        assert(callable(approval_function))
+        assert callable(approval_function)
         assert isinstance(source, Address)
 
-        approval_function(ERC20Token(web3=self.web3, address=source),
-                          self.address, self.__class__.__name__)
+        approval_function(
+            ERC20Token(web3=self.web3, address=source),
+            self.address,
+            self.__class__.__name__,
+        )
 
     def approve_token(self, approval_function, **kwargs):
         return self.approve(approval_function, self._token.address, **kwargs)
@@ -179,15 +190,29 @@ class Join(Contract):
         assert isinstance(usr, Address)
         assert isinstance(value, Wad)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract,
-                        'join', [usr.address, value.value])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "join",
+            [usr.address, value.value],
+        )
 
     def exit(self, usr: Address, value: Wad) -> Transact:
         assert isinstance(usr, Address)
         assert isinstance(value, Wad)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract,
-                        'exit', [usr.address, value.value])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "exit",
+            [usr.address, value.value],
+        )
 
 
 class DaiJoin(Join):
@@ -196,8 +221,8 @@ class DaiJoin(Join):
     Ref. <https://github.com/makerdao/dss/blob/master/src/join.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/DaiJoin.abi')
-    bin = Contract._load_bin(__name__, 'abi/DaiJoin.bin')
+    abi = Contract._load_abi(__name__, "abi/DaiJoin.abi")
+    bin = Contract._load_bin(__name__, "abi/DaiJoin.bin")
 
     def __init__(self, web3: Web3, address: Address):
         super(DaiJoin, self).__init__(web3, address)
@@ -214,8 +239,8 @@ class GemJoin(Join):
     Ref. <https://github.com/makerdao/dss/blob/master/src/join.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/GemJoin.abi')
-    bin = Contract._load_bin(__name__, 'abi/GemJoin.bin')
+    abi = Contract._load_abi(__name__, "abi/GemJoin.abi")
+    bin = Contract._load_bin(__name__, "abi/GemJoin.bin")
 
     def __init__(self, web3: Web3, address: Address):
         super(GemJoin, self).__init__(web3, address)
@@ -237,8 +262,9 @@ class GemJoin5(GemJoin):
 
     Ref. <https://github.com/makerdao/dss-deploy/blob/master/src/join.sol#L274>
     """
-    abi = Contract._load_abi(__name__, 'abi/GemJoin5.abi')
-    bin = Contract._load_bin(__name__, 'abi/GemJoin5.bin')
+
+    abi = Contract._load_abi(__name__, "abi/GemJoin5.abi")
+    bin = Contract._load_bin(__name__, "abi/GemJoin5.bin")
 
     def __init__(self, web3: Web3, address: Address):
         super(GemJoin5, self).__init__(web3, address)
@@ -254,7 +280,9 @@ class Collateral:
     but will share the same gem (WETH token), GemJoin instance, and Flipper contract.
     """
 
-    def __init__(self, ilk: Ilk, gem: ERC20Token, adapter: GemJoin, flipper: Flipper, pip):
+    def __init__(
+        self, ilk: Ilk, gem: ERC20Token, adapter: GemJoin, flipper: Flipper, pip
+    ):
         assert isinstance(ilk, Ilk)
         assert isinstance(gem, ERC20Token)
         assert isinstance(adapter, GemJoin)
@@ -275,12 +303,11 @@ class Collateral:
         Args
             usr: User making transactions with this collateral
         """
-        gas_price = kwargs['gas_price'] if 'gas_price' in kwargs else DefaultGasPrice(
+        gas_price = kwargs["gas_price"] if "gas_price" in kwargs else DefaultGasPrice()
+        self.adapter.approve(
+            hope_directly(from_address=usr, gas_price=gas_price), self.flipper.vat()
         )
-        self.adapter.approve(hope_directly(
-            from_address=usr, gas_price=gas_price), self.flipper.vat())
-        self.adapter.approve_token(
-            directly(from_address=usr, gas_price=gas_price))
+        self.adapter.approve_token(directly(from_address=usr, gas_price=gas_price))
 
 
 class Vat(Contract):
@@ -290,27 +317,32 @@ class Vat(Contract):
     """
 
     # Identifies CDP holders and collateral types they have frobbed
-    class LogFrob():
+    class LogFrob:
         def __init__(self, lognote: LogNote):
             assert isinstance(lognote, LogNote)
 
-            self.ilk = str(Web3.toText(lognote.arg1)).replace('\x00', '')
+            self.ilk = str(Web3.toText(lognote.arg1)).replace("\x00", "")
             self.urn = Address(Web3.toHex(lognote.arg2)[26:])
             self.collateral_owner = Address(Web3.toHex(lognote.arg3)[26:])
-            self.dai_recipient = Address(Web3.toHex(
-                lognote.get_bytes_at_index(3))[26:])
-            self.dink = Wad(int.from_bytes(
-                lognote.get_bytes_at_index(4), byteorder="big", signed=True))
-            self.dart = Wad(int.from_bytes(
-                lognote.get_bytes_at_index(5), byteorder="big", signed=True))
+            self.dai_recipient = Address(Web3.toHex(lognote.get_bytes_at_index(3))[26:])
+            self.dink = Wad(
+                int.from_bytes(
+                    lognote.get_bytes_at_index(4), byteorder="big", signed=True
+                )
+            )
+            self.dart = Wad(
+                int.from_bytes(
+                    lognote.get_bytes_at_index(5), byteorder="big", signed=True
+                )
+            )
             self.block = lognote.block
             self.tx_hash = lognote.tx_hash
 
         def __repr__(self):
             return f"LogFrob({pformat(vars(self))})"
 
-    abi = Contract._load_abi(__name__, 'abi/Vat.abi')
-    bin = Contract._load_bin(__name__, 'abi/Vat.bin')
+    abi = Contract._load_abi(__name__, "abi/Vat.abi")
+    bin = Contract._load_bin(__name__, "abi/Vat.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -323,7 +355,15 @@ class Vat(Contract):
     def init(self, ilk: Ilk) -> Transact:
         assert isinstance(ilk, Ilk)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'init', [ilk.toBytes()])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "init",
+            [ilk.toBytes()],
+        )
 
     def live(self) -> bool:
         return self._contract.functions.live().call() > 0
@@ -336,7 +376,15 @@ class Vat(Contract):
     def hope(self, address: Address):
         assert isinstance(address, Address)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'hope', [address.address])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "hope",
+            [address.address],
+        )
 
     def can(self, sender: Address, usr: Address):
         assert isinstance(sender, Address)
@@ -351,7 +399,15 @@ class Vat(Contract):
         (art, rate, spot, line, dust) = self._contract.functions.ilks(b32_ilk).call()
 
         # We could get "ink" from the urn, but caller must provide an address.
-        return Ilk(name, rate=Ray(rate), ink=Wad(0), art=Wad(art), spot=Ray(spot), line=Rad(line), dust=Rad(dust))
+        return Ilk(
+            name,
+            rate=Ray(rate),
+            ink=Wad(0),
+            art=Wad(art),
+            spot=Ray(spot),
+            line=Rad(line),
+            dust=Rad(dust),
+        )
 
     def gem(self, ilk: Ilk, urn: Address) -> Wad:
         assert isinstance(ilk, Ilk)
@@ -374,7 +430,8 @@ class Vat(Contract):
         assert isinstance(address, Address)
 
         (ink, art) = self._contract.functions.urns(
-            ilk.toBytes(), address.address).call()
+            ilk.toBytes(), address.address
+        ).call()
         return Urn(address, ilk, Wad(ink), Wad(art))
 
     def urns(self, ilk=None, from_block=0) -> dict:
@@ -426,7 +483,9 @@ class Vat(Contract):
         assert isinstance(wad, Wad)
 
         flux_args = [ilk.toBytes(), src.address, dst.address, wad.value]
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'flux', flux_args)
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "flux", flux_args
+        )
 
     def move(self, src: Address, dst: Address, rad: Rad) -> Transact:
         """Move Dai balance in Vat from source address to destiny address
@@ -441,9 +500,13 @@ class Vat(Contract):
         assert isinstance(rad, Rad)
 
         move_args = [src.address, dst.address, rad.value]
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'move', move_args)
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "move", move_args
+        )
 
-    def fork(self, ilk: Ilk, src: Address, dst: Address, dink: Wad, dart: Wad) -> Transact:
+    def fork(
+        self, ilk: Ilk, src: Address, dst: Address, dink: Wad, dart: Wad
+    ) -> Transact:
         """Split a Vault - binary approval or splitting/merging Vault's
 
         Args:
@@ -459,11 +522,20 @@ class Vat(Contract):
         assert isinstance(dink, Wad)
         assert isinstance(dart, Wad)
 
-        fork_args = [ilk.toBytes(), src.address, dst.address,
-                     dink.value, dart.value]
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'fork', fork_args)
+        fork_args = [ilk.toBytes(), src.address, dst.address, dink.value, dart.value]
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "fork", fork_args
+        )
 
-    def frob(self, ilk: Ilk, urn_address: Address, dink: Wad, dart: Wad, collateral_owner=None, dai_recipient=None):
+    def frob(
+        self,
+        ilk: Ilk,
+        urn_address: Address,
+        dink: Wad,
+        dart: Wad,
+        collateral_owner=None,
+        dai_recipient=None,
+    ):
         """Adjust amount of collateral and reserved amount of Dai for the CDP
 
         Args:
@@ -478,8 +550,7 @@ class Vat(Contract):
         assert isinstance(urn_address, Address)
         assert isinstance(dink, Wad)
         assert isinstance(dart, Wad)
-        assert isinstance(collateral_owner, Address) or (
-            collateral_owner is None)
+        assert isinstance(collateral_owner, Address) or (collateral_owner is None)
         assert isinstance(dai_recipient, Address) or (dai_recipient is None)
 
         # Usually these addresses are the same as the account holding the urn
@@ -492,14 +563,31 @@ class Vat(Contract):
 
         if v == urn_address and w == urn_address:
             logger.info(
-                f"frobbing {ilk.name} urn {urn_address.address} with dink={dink}, dart={dart}")
+                f"frobbing {ilk.name} urn {urn_address.address} with dink={dink}, dart={dart}"
+            )
         else:
-            logger.info(f"frobbing {ilk.name} urn {urn_address.address} "
-                        f"with dink={dink} from {v.address}, "
-                        f"dart={dart} for {w.address}")
+            logger.info(
+                f"frobbing {ilk.name} urn {urn_address.address} "
+                f"with dink={dink} from {v.address}, "
+                f"dart={dart} for {w.address}"
+            )
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract,
-                        'frob', [ilk.toBytes(), urn_address.address, v.address, w.address, dink.value, dart.value])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "frob",
+            [
+                ilk.toBytes(),
+                urn_address.address,
+                v.address,
+                w.address,
+                dink.value,
+                dart.value,
+            ],
+        )
 
     def validate_frob(self, ilk: Ilk, address: Address, dink: Wad, dart: Wad):
         """Helps diagnose `frob` transaction failures by asserting on `require` conditions in the contract"""
@@ -511,8 +599,10 @@ class Vat(Contract):
         urn = self.urn(ilk, address)
         ilk = self.ilk(ilk.name)
 
-        logger.debug(f"urn.ink={urn.ink}, urn.art={urn.art}, dink={dink}, dart={dart}, "
-                     f"ilk.rate={ilk.rate}, debt={str(self.debt())}")
+        logger.debug(
+            f"urn.ink={urn.ink}, urn.art={urn.art}, dink={dink}, dart={dart}, "
+            f"ilk.rate={ilk.rate}, debt={str(self.debt())}"
+        )
         ink = urn.ink + dink
         art = urn.art + dart
         ilk_art = ilk.art + dart
@@ -531,12 +621,10 @@ class Vat(Contract):
         # Vault remains under both collateral and total debt ceilings
         under_collateral_debt_ceiling = Rad(ilk_art * rate) <= ilk.line
         if not under_collateral_debt_ceiling:
-            logger.warning(
-                f"Vault would exceed collateral debt ceiling of {ilk.line}")
+            logger.warning(f"Vault would exceed collateral debt ceiling of {ilk.line}")
         under_total_debt_ceiling = debt < self.line()
         if not under_total_debt_ceiling:
-            logger.warning(
-                f"Vault would exceed total debt ceiling of {self.line()}")
+            logger.warning(f"Vault would exceed total debt ceiling of {self.line()}")
         calm = under_collateral_debt_ceiling and under_total_debt_ceiling
 
         safe = (urn.art * rate) <= ink * ilk.spot
@@ -561,16 +649,16 @@ class Vat(Contract):
 
         block_number = self._contract.web3.eth.blockNumber
         filter_params = {
-            'address': self.address.address,
-            'fromBlock': max(block_number-number_of_past_blocks, 0),
-            'toBlock': block_number
+            "address": self.address.address,
+            "fromBlock": max(block_number - number_of_past_blocks, 0),
+            "toBlock": block_number,
         }
 
         logs = self.web3.eth.getLogs(filter_params)
 
         lognotes = list(map(lambda l: LogNote.from_event(l, Vat.abi), logs))
         # '0x7cdd3fde' is Vat.slip (from GemJoin.join) and '0x76088703' is Vat.frob
-        logfrobs = list(filter(lambda l: l.sig == '0x76088703', lognotes))
+        logfrobs = list(filter(lambda l: l.sig == "0x76088703", lognotes))
         logfrobs = list(map(lambda l: Vat.LogFrob(l), logfrobs))
 
         if ilk is not None:
@@ -581,7 +669,15 @@ class Vat(Contract):
     def heal(self, vice: Rad) -> Transact:
         assert isinstance(vice, Rad)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'heal', [vice.value])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "heal",
+            [vice.value],
+        )
 
     def __eq__(self, other):
         assert isinstance(other, Vat)
@@ -598,8 +694,8 @@ class Spotter(Contract):
     Ref. <https://github.com/makerdao/dss-deploy/blob/master/src/poke.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/Spotter.abi')
-    bin = Contract._load_bin(__name__, 'abi/Spotter.bin')
+    abi = Contract._load_abi(__name__, "abi/Spotter.abi")
+    bin = Contract._load_bin(__name__, "abi/Spotter.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -612,7 +708,15 @@ class Spotter(Contract):
     def poke(self, ilk: Ilk) -> Transact:
         assert isinstance(ilk, Ilk)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'poke', [ilk.toBytes()])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "poke",
+            [ilk.toBytes()],
+        )
 
     def vat(self) -> Address:
         return Address(self._contract.functions.vat().call())
@@ -637,8 +741,8 @@ class Vow(Contract):
     Ref. <https://github.com/makerdao/dss/blob/master/src/heal.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/Vow.abi')
-    bin = Contract._load_bin(__name__, 'abi/Vow.bin')
+    abi = Contract._load_abi(__name__, "abi/Vow.abi")
+    bin = Contract._load_bin(__name__, "abi/Vow.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -652,7 +756,15 @@ class Vow(Contract):
     def rely(self, guy: Address) -> Transact:
         assert isinstance(guy, Address)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'rely', [guy.address])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "rely",
+            [guy.address],
+        )
 
     def live(self) -> bool:
         return self._contract.functions.live().call() > 0
@@ -693,32 +805,40 @@ class Vow(Contract):
     def flog(self, era: int) -> Transact:
         assert isinstance(era, int)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'flog', [era])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "flog", [era]
+        )
 
     def heal(self, rad: Rad) -> Transact:
         assert isinstance(rad, Rad)
-        logger.info(
-            f"Healing joy={self.vat.dai(self.address)} woe={self.woe()}")
+        logger.info(f"Healing joy={self.vat.dai(self.address)} woe={self.woe()}")
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'heal', [rad.value])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "heal", [rad.value]
+        )
 
     def kiss(self, rad: Rad) -> Transact:
         assert isinstance(rad, Rad)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'kiss', [rad.value])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "kiss", [rad.value]
+        )
 
     def flop(self) -> Transact:
         """Initiate a debt auction"""
         logger.info(f"Initiating a flop auction with woe={self.woe()}")
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'flop', [])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "flop", []
+        )
 
     def flap(self) -> Transact:
         """Initiate a surplus auction"""
-        logger.info(
-            f"Initiating a flap auction with joy={self.vat.dai(self.address)}")
+        logger.info(f"Initiating a flap auction with joy={self.vat.dai(self.address)}")
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'flap', [])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "flap", []
+        )
 
     def __repr__(self):
         return f"Vow('{self.address}')"
@@ -730,8 +850,8 @@ class Jug(Contract):
     Ref. <https://github.com/makerdao/dss/blob/master/src/jug.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/Jug.abi')
-    bin = Contract._load_bin(__name__, 'abi/Jug.bin')
+    abi = Contract._load_abi(__name__, "abi/Jug.abi")
+    bin = Contract._load_bin(__name__, "abi/Jug.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -746,7 +866,15 @@ class Jug(Contract):
     def init(self, ilk: Ilk) -> Transact:
         assert isinstance(ilk, Ilk)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'init', [ilk.toBytes()])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "init",
+            [ilk.toBytes()],
+        )
 
     def wards(self, address: Address):
         assert isinstance(address, Address)
@@ -756,7 +884,15 @@ class Jug(Contract):
     def drip(self, ilk: Ilk) -> Transact:
         assert isinstance(ilk, Ilk)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'drip', [ilk.toBytes()])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "drip",
+            [ilk.toBytes()],
+        )
 
     def base(self) -> Wad:
         return Wad(self._contract.functions.base().call())
@@ -785,31 +921,32 @@ class Cat(Contract):
     # This information is read from the `Bite` event emitted from `Cat.bite`
     class LogBite:
         def __init__(self, log):
-            self.ilk = Ilk.fromBytes(log['args']['ilk'])
-            self.urn = Urn(Address(log['args']['urn']))
-            self.ink = Wad(log['args']['ink'])
-            self.art = Wad(log['args']['art'])
-            self.tab = Rad(log['args']['tab'])
-            self.flip = Address(log['args']['flip'])
+            self.ilk = Ilk.fromBytes(log["args"]["ilk"])
+            self.urn = Urn(Address(log["args"]["urn"]))
+            self.ink = Wad(log["args"]["ink"])
+            self.art = Wad(log["args"]["art"])
+            self.tab = Rad(log["args"]["tab"])
+            self.flip = Address(log["args"]["flip"])
             self.raw = log
 
         @classmethod
         def from_event(cls, event: dict):
             assert isinstance(event, dict)
 
-            topics = event.get('topics')
-            if topics and topics[0] == HexBytes('0x99b5620489b6ef926d4518936cfec15d305452712b88bd59da2d9c10fb0953e8'):
-                log_bite_abi = [
-                    abi for abi in Cat.abi if abi.get('name') == 'Bite'][0]
+            topics = event.get("topics")
+            if topics and topics[0] == HexBytes(
+                "0x99b5620489b6ef926d4518936cfec15d305452712b88bd59da2d9c10fb0953e8"
+            ):
+                log_bite_abi = [abi for abi in Cat.abi if abi.get("name") == "Bite"][0]
                 codec = ABICodec(default_registry)
                 event_data = get_event_data(codec, log_bite_abi, event)
 
                 return Cat.LogBite(event_data)
             else:
-                logging.warning(f'[from_event] Invalid topic in {event}')
+                logging.warning(f"[from_event] Invalid topic in {event}")
 
         def era(self, web3: Web3):
-            return web3.eth.getBlock(self.raw['blockNumber'])['timestamp']
+            return web3.eth.getBlock(self.raw["blockNumber"])["timestamp"]
 
         def __eq__(self, other):
             assert isinstance(other, Cat.LogBite)
@@ -818,8 +955,8 @@ class Cat(Contract):
         def __repr__(self):
             return pformat(vars(self))
 
-    abi = Contract._load_abi(__name__, 'abi/Cat.abi')
-    bin = Contract._load_bin(__name__, 'abi/Cat.bin')
+    abi = Contract._load_abi(__name__, "abi/Cat.abi")
+    bin = Contract._load_bin(__name__, "abi/Cat.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -847,11 +984,20 @@ class Cat(Contract):
         ilk = self.vat.ilk(ilk.name)
         urn = self.vat.urn(ilk, urn.address)
         rate = self.vat.ilk(ilk.name).rate
-        logger.info(f'Biting {ilk.name} CDP {urn.address.address} with ink={urn.ink} spot={ilk.spot} '
-                    f'art={urn.art} rate={rate}')
+        logger.info(
+            f"Biting {ilk.name} CDP {urn.address.address} with ink={urn.ink} spot={ilk.spot} "
+            f"art={urn.art} rate={rate}"
+        )
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract,
-                        'bite', [ilk.toBytes(), urn.address.address])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "bite",
+            [ilk.toBytes(), urn.address.address],
+        )
 
     def lump(self, ilk: Ilk) -> Wad:
         assert isinstance(ilk, Ilk)
@@ -868,8 +1014,15 @@ class Cat(Contract):
     def file_vow(self, vow: Vow) -> Transact:
         assert isinstance(vow, Vow)
 
-        return Transact(self, self.web3, self.abi, self.address, self._contract,
-                        'file(bytes32,address)', [Web3.toBytes(text="vow"), vow.address.address])
+        return Transact(
+            self,
+            self.web3,
+            self.abi,
+            self.address,
+            self._contract,
+            "file(bytes32,address)",
+            [Web3.toBytes(text="vow"), vow.address.address],
+        )
 
     def flipper(self, ilk: Ilk) -> Address:
         assert isinstance(ilk, Ilk)
@@ -877,7 +1030,9 @@ class Cat(Contract):
         (flip, chop, lump) = self._contract.functions.ilks(ilk.toBytes()).call()
         return Address(flip)
 
-    def past_bites(self, number_of_past_blocks: int, event_filter: dict = None) -> List[LogBite]:
+    def past_bites(
+        self, number_of_past_blocks: int, event_filter: dict = None
+    ) -> List[LogBite]:
         """Synchronously retrieve past LogBite events.
 
         `LogBite` events are emitted every time someone bites a CDP.
@@ -892,7 +1047,9 @@ class Cat(Contract):
         assert isinstance(number_of_past_blocks, int)
         assert isinstance(event_filter, dict) or (event_filter is None)
 
-        return self._past_events(self._contract, 'Bite', Cat.LogBite, number_of_past_blocks, event_filter)
+        return self._past_events(
+            self._contract, "Bite", Cat.LogBite, number_of_past_blocks, event_filter
+        )
 
     def __repr__(self):
         return f"Cat('{self.address}')"
@@ -904,8 +1061,8 @@ class Pot(Contract):
     Ref. <https://github.com/makerdao/dss/blob/master/src/pot.sol>
     """
 
-    abi = Contract._load_abi(__name__, 'abi/Pot.abi')
-    bin = Contract._load_bin(__name__, 'abi/Pot.bin')
+    abi = Contract._load_abi(__name__, "abi/Pot.abi")
+    bin = Contract._load_bin(__name__, "abi/Pot.bin")
 
     def __init__(self, web3: Web3, address: Address):
         assert isinstance(web3, Web3)
@@ -918,10 +1075,14 @@ class Pot(Contract):
     def approve(self, source: Address, approval_function, **kwargs):
         """Approve the pot to access Dai from our Urns"""
         assert isinstance(source, Address)
-        assert(callable(approval_function))
+        assert callable(approval_function)
 
-        approval_function(ERC20Token(web3=self.web3, address=source),
-                          self.address, self.__class__.__name__, **kwargs)
+        approval_function(
+            ERC20Token(web3=self.web3, address=source),
+            self.address,
+            self.__class__.__name__,
+            **kwargs,
+        )
 
     def pie_of(self, address: Address) -> Wad:
         assert isinstance(address, Address)
@@ -944,7 +1105,9 @@ class Pot(Contract):
         return datetime.fromtimestamp(rho)
 
     def drip(self) -> Transact:
-        return Transact(self, self.web3, self.abi, self.address, self._contract, 'drip', [])
+        return Transact(
+            self, self.web3, self.abi, self.address, self._contract, "drip", []
+        )
 
     """Note that join requires use of proxy contract, so join/exit are not provided here."""
 

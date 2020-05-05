@@ -28,7 +28,19 @@ from pymaker import Address
 from pymaker.approval import directly, hope_directly
 from pymaker.auth import DSGuard
 from pymaker.etherdelta import EtherDelta
-from pymaker.dss import Cat, Collateral, DaiJoin, GemJoin, GemJoin5, Ilk, Jug, Pot, Spotter, Vat, Vow
+from pymaker.dss import (
+    Cat,
+    Collateral,
+    DaiJoin,
+    GemJoin,
+    GemJoin5,
+    Ilk,
+    Jug,
+    Pot,
+    Spotter,
+    Vat,
+    Vow,
+)
 from pymaker.proxy import ProxyRegistry, DssProxyActionsDsr
 from pymaker.feed import DSValue
 from pymaker.gas import DefaultGasPrice
@@ -43,7 +55,9 @@ from pymaker.vault import DSVault
 from pymaker.cdpmanager import CdpManager
 
 
-def deploy_contract(web3: Web3, contract_name: str, args: Optional[list] = None) -> Address:
+def deploy_contract(
+    web3: Web3, contract_name: str, args: Optional[list] = None
+) -> Address:
     """Deploys a new contract.
 
     Args:
@@ -54,22 +68,25 @@ def deploy_contract(web3: Web3, contract_name: str, args: Optional[list] = None)
     Returns:
         Ethereum address of the newly deployed contract, as a :py:class:`pymaker.Address` instance.
     """
-    assert(isinstance(web3, Web3))
-    assert(isinstance(contract_name, str))
-    assert(isinstance(args, list) or (args is None))
+    assert isinstance(web3, Web3)
+    assert isinstance(contract_name, str)
+    assert isinstance(args, list) or (args is None)
 
-    abi = json.loads(pkg_resources.resource_string(
-        'pymaker.deployment', f'abi/{contract_name}.abi'))
-    bytecode = str(pkg_resources.resource_string(
-        'pymaker.deployment', f'abi/{contract_name}.bin'), 'utf-8')
+    abi = json.loads(
+        pkg_resources.resource_string("pymaker.deployment", f"abi/{contract_name}.abi")
+    )
+    bytecode = str(
+        pkg_resources.resource_string("pymaker.deployment", f"abi/{contract_name}.bin"),
+        "utf-8",
+    )
     if args is not None:
-        tx_hash = web3.eth.contract(
-            abi=abi, bytecode=bytecode).constructor(*args).transact()
+        tx_hash = (
+            web3.eth.contract(abi=abi, bytecode=bytecode).constructor(*args).transact()
+        )
     else:
-        tx_hash = web3.eth.contract(
-            abi=abi, bytecode=bytecode).constructor().transact()
+        tx_hash = web3.eth.contract(abi=abi, bytecode=bytecode).constructor().transact()
     receipt = web3.eth.getTransactionReceipt(tx_hash)
-    return Address(receipt['contractAddress'])
+    return Address(receipt["contractAddress"])
 
 
 class Deployment:
@@ -84,34 +101,43 @@ class Deployment:
         web3 = Web3(HTTPProvider("http://localhost:8555"))
         web3.eth.defaultAccount = web3.eth.accounts[0]
         our_address = Address(web3.eth.defaultAccount)
-        sai = DSToken.deploy(web3, 'DAI')
-        sin = DSToken.deploy(web3, 'SIN')
-        skr = DSToken.deploy(web3, 'PETH')
-        gem = DSToken.deploy(web3, 'WETH')
-        gov = DSToken.deploy(web3, 'MKR')
+        sai = DSToken.deploy(web3, "DAI")
+        sin = DSToken.deploy(web3, "SIN")
+        skr = DSToken.deploy(web3, "PETH")
+        gem = DSToken.deploy(web3, "WETH")
+        gov = DSToken.deploy(web3, "MKR")
         pip = DSValue.deploy(web3)
         pep = DSValue.deploy(web3)
         pit = DSVault.deploy(web3)
 
         vox = Vox.deploy(web3, per=Ray.from_number(1))
-        tub = Tub.deploy(web3, sai=sai.address, sin=sin.address, skr=skr.address, gem=gem.address, gov=gov.address,
-                         pip=pip.address, pep=pep.address, vox=vox.address, pit=pit.address)
+        tub = Tub.deploy(
+            web3,
+            sai=sai.address,
+            sin=sin.address,
+            skr=skr.address,
+            gem=gem.address,
+            gov=gov.address,
+            pip=pip.address,
+            pep=pep.address,
+            vox=vox.address,
+            pit=pit.address,
+        )
         tap = Tap.deploy(web3, tub.address)
         top = Top.deploy(web3, tub.address, tap.address)
 
         tub._contract.functions.turn(tap.address.address).transact()
 
         otc = MatchingMarket.deploy(web3, 2600000000)
-        etherdelta = EtherDelta.deploy(web3,
-                                       admin=Address(
-                                           '0x1111100000999998888877777666665555544444'),
-                                       fee_account=Address(
-                                           '0x8888877777666665555544444111110000099999'),
-                                       account_levels_addr=Address(
-                                           '0x0000000000000000000000000000000000000000'),
-                                       fee_make=Wad.from_number(0.01),
-                                       fee_take=Wad.from_number(0.02),
-                                       fee_rebate=Wad.from_number(0.03))
+        etherdelta = EtherDelta.deploy(
+            web3,
+            admin=Address("0x1111100000999998888877777666665555544444"),
+            fee_account=Address("0x8888877777666665555544444111110000099999"),
+            account_levels_addr=Address("0x0000000000000000000000000000000000000000"),
+            fee_make=Wad.from_number(0.01),
+            fee_take=Wad.from_number(0.02),
+            fee_rebate=Wad.from_number(0.03),
+        )
 
         # set permissions
         dad = DSGuard.deploy(web3)
@@ -149,11 +175,10 @@ class Deployment:
     def reset(self):
         """Rollbacks all changes made since the initial deployment."""
         self.web3.manager.request_blocking("evm_revert", [self.snapshot_id])
-        self.snapshot_id = self.web3.manager.request_blocking(
-            "evm_snapshot", [])
+        self.snapshot_id = self.web3.manager.request_blocking("evm_snapshot", [])
 
     def time_travel_by(self, seconds: int):
-        assert(isinstance(seconds, int))
+        assert isinstance(seconds, int)
         self.web3.manager.request_blocking("evm_increaseTime", [seconds])
 
 
@@ -164,17 +189,31 @@ class DssDeployment:
     a deployment from a json description of all the system addresses.
     """
 
-    NETWORKS = {
-        "1": "mainnet",
-        "42": "kovan"
-    }
+    NETWORKS = {"1": "mainnet", "42": "kovan"}
 
     class Config:
-        def __init__(self, pause: DSPause, vat: Vat, vow: Vow, jug: Jug, cat: Cat, flapper: Flapper,
-                     flopper: Flopper, pot: Pot, dai: DSToken, dai_join: DaiJoin, mkr: DSToken,
-                     spotter: Spotter, ds_chief: DSChief, esm: ShutdownModule, end: End,
-                     proxy_registry: ProxyRegistry, dss_proxy_actions: DssProxyActionsDsr, cdp_manager: CdpManager,
-                     collaterals: Optional[Dict[str, Collateral]] = None):
+        def __init__(
+            self,
+            pause: DSPause,
+            vat: Vat,
+            vow: Vow,
+            jug: Jug,
+            cat: Cat,
+            flapper: Flapper,
+            flopper: Flopper,
+            pot: Pot,
+            dai: DSToken,
+            dai_join: DaiJoin,
+            mkr: DSToken,
+            spotter: Spotter,
+            ds_chief: DSChief,
+            esm: ShutdownModule,
+            end: End,
+            proxy_registry: ProxyRegistry,
+            dss_proxy_actions: DssProxyActionsDsr,
+            cdp_manager: CdpManager,
+            collaterals: Optional[Dict[str, Collateral]] = None,
+        ):
             self.pause = pause
             self.vat = vat
             self.vow = vow
@@ -198,70 +237,90 @@ class DssDeployment:
         @staticmethod
         def from_json(web3: Web3, conf: str):
             conf = json.loads(conf)
-            pause = DSPause(web3, Address(conf['MCD_PAUSE']))
-            vat = Vat(web3, Address(conf['MCD_VAT']))
-            vow = Vow(web3, Address(conf['MCD_VOW']))
-            jug = Jug(web3, Address(conf['MCD_JUG']))
-            cat = Cat(web3, Address(conf['MCD_CAT']))
-            dai = DSToken(web3, Address(conf['MCD_DAI']))
-            dai_adapter = DaiJoin(web3, Address(conf['MCD_JOIN_DAI']))
-            flapper = Flapper(web3, Address(conf['MCD_FLAP']))
-            flopper = Flopper(web3, Address(conf['MCD_FLOP']))
-            pot = Pot(web3, Address(conf['MCD_POT']))
-            mkr = DSToken(web3, Address(conf['MCD_GOV']))
-            spotter = Spotter(web3, Address(conf['MCD_SPOT']))
-            ds_chief = DSChief(web3, Address(conf['MCD_ADM']))
-            esm = ShutdownModule(web3, Address(conf['MCD_ESM']))
-            end = End(web3, Address(conf['MCD_END']))
-            proxy_registry = ProxyRegistry(
-                web3, Address(conf['PROXY_REGISTRY']))
+            pause = DSPause(web3, Address(conf["MCD_PAUSE"]))
+            vat = Vat(web3, Address(conf["MCD_VAT"]))
+            vow = Vow(web3, Address(conf["MCD_VOW"]))
+            jug = Jug(web3, Address(conf["MCD_JUG"]))
+            cat = Cat(web3, Address(conf["MCD_CAT"]))
+            dai = DSToken(web3, Address(conf["MCD_DAI"]))
+            dai_adapter = DaiJoin(web3, Address(conf["MCD_JOIN_DAI"]))
+            flapper = Flapper(web3, Address(conf["MCD_FLAP"]))
+            flopper = Flopper(web3, Address(conf["MCD_FLOP"]))
+            pot = Pot(web3, Address(conf["MCD_POT"]))
+            mkr = DSToken(web3, Address(conf["MCD_GOV"]))
+            spotter = Spotter(web3, Address(conf["MCD_SPOT"]))
+            ds_chief = DSChief(web3, Address(conf["MCD_ADM"]))
+            esm = ShutdownModule(web3, Address(conf["MCD_ESM"]))
+            end = End(web3, Address(conf["MCD_END"]))
+            proxy_registry = ProxyRegistry(web3, Address(conf["PROXY_REGISTRY"]))
             dss_proxy_actions = DssProxyActionsDsr(
-                web3, Address(conf['PROXY_ACTIONS_DSR']))
-            cdp_manager = CdpManager(web3, Address(conf['CDP_MANAGER']))
+                web3, Address(conf["PROXY_ACTIONS_DSR"])
+            )
+            cdp_manager = CdpManager(web3, Address(conf["CDP_MANAGER"]))
 
             collaterals = {}
-            for name in DssDeployment.Config._infer_collaterals_from_addresses(conf.keys()):
-                ilk = Ilk(name[0].replace('_', '-'))
+            for name in DssDeployment.Config._infer_collaterals_from_addresses(
+                conf.keys()
+            ):
+                ilk = Ilk(name[0].replace("_", "-"))
                 if name[1] == "ETH":
                     gem = DSEthToken(web3, Address(conf[name[1]]))
                 else:
                     gem = DSToken(web3, Address(conf[name[1]]))
 
-                if name[1] in ['USDC', 'WBTC']:
-                    adapter = GemJoin5(web3, Address(
-                        conf[f'MCD_JOIN_{name[0]}']))
+                if name[1] in ["USDC", "WBTC"]:
+                    adapter = GemJoin5(web3, Address(conf[f"MCD_JOIN_{name[0]}"]))
                 else:
-                    adapter = GemJoin(web3, Address(
-                        conf[f'MCD_JOIN_{name[0]}']))
+                    adapter = GemJoin(web3, Address(conf[f"MCD_JOIN_{name[0]}"]))
 
                 # PIP contract may be a DSValue, OSM, or bogus address.
-                pip_address = Address(conf[f'PIP_{name[1]}'])
-                network = DssDeployment.NETWORKS.get(
-                    web3.net.version, "testnet")
+                pip_address = Address(conf[f"PIP_{name[1]}"])
+                network = DssDeployment.NETWORKS.get(web3.net.version, "testnet")
                 if network == "testnet":
                     pip = DSValue(web3, pip_address)
                 else:
                     pip = OSM(web3, pip_address)
 
-                collateral = Collateral(ilk=ilk, gem=gem, adapter=adapter,
-                                        flipper=Flipper(web3, Address(
-                                            conf[f'MCD_FLIP_{name[0]}'])),
-                                        pip=pip)
+                collateral = Collateral(
+                    ilk=ilk,
+                    gem=gem,
+                    adapter=adapter,
+                    flipper=Flipper(web3, Address(conf[f"MCD_FLIP_{name[0]}"])),
+                    pip=pip,
+                )
                 collaterals[ilk.name] = collateral
 
-            return DssDeployment.Config(pause, vat, vow, jug, cat, flapper, flopper, pot,
-                                        dai, dai_adapter, mkr, spotter, ds_chief, esm, end,
-                                        proxy_registry, dss_proxy_actions, cdp_manager, collaterals)
+            return DssDeployment.Config(
+                pause,
+                vat,
+                vow,
+                jug,
+                cat,
+                flapper,
+                flopper,
+                pot,
+                dai,
+                dai_adapter,
+                mkr,
+                spotter,
+                ds_chief,
+                esm,
+                end,
+                proxy_registry,
+                dss_proxy_actions,
+                cdp_manager,
+                collaterals,
+            )
 
         @staticmethod
         def _infer_collaterals_from_addresses(keys: []) -> List:
             collaterals = []
             for key in keys:
-                match = re.search(r'MCD_FLIP_((\w+)_\w+)', key)
+                match = re.search(r"MCD_FLIP_((\w+)_\w+)", key)
                 if match:
                     collaterals.append((match.group(1), match.group(2)))
                     continue
-                match = re.search(r'MCD_FLIP_(\w+)', key)
+                match = re.search(r"MCD_FLIP_(\w+)", key)
                 if match:
                     collaterals.append((match.group(1), match.group(1)))
 
@@ -269,33 +328,33 @@ class DssDeployment:
 
         def to_dict(self) -> dict:
             conf_dict = {
-                'MCD_PAUSE': self.pause.address.address,
-                'MCD_VAT': self.vat.address.address,
-                'MCD_VOW': self.vow.address.address,
-                'MCD_JUG': self.jug.address.address,
-                'MCD_CAT': self.cat.address.address,
-                'MCD_FLAP': self.flapper.address.address,
-                'MCD_FLOP': self.flopper.address.address,
-                'MCD_POT': self.pot.address.address,
-                'MCD_DAI': self.dai.address.address,
-                'MCD_JOIN_DAI': self.dai_join.address.address,
-                'MCD_GOV': self.mkr.address.address,
-                'MCD_SPOT': self.spotter.address.address,
-                'MCD_ADM': self.ds_chief.address.address,
-                'MCD_ESM': self.esm.address.address,
-                'MCD_END': self.end.address.address,
-                'PROXY_REGISTRY': self.proxy_registry.address.address,
-                'PROXY_ACTIONS_DSR': self.dss_proxy_actions.address.address
+                "MCD_PAUSE": self.pause.address.address,
+                "MCD_VAT": self.vat.address.address,
+                "MCD_VOW": self.vow.address.address,
+                "MCD_JUG": self.jug.address.address,
+                "MCD_CAT": self.cat.address.address,
+                "MCD_FLAP": self.flapper.address.address,
+                "MCD_FLOP": self.flopper.address.address,
+                "MCD_POT": self.pot.address.address,
+                "MCD_DAI": self.dai.address.address,
+                "MCD_JOIN_DAI": self.dai_join.address.address,
+                "MCD_GOV": self.mkr.address.address,
+                "MCD_SPOT": self.spotter.address.address,
+                "MCD_ADM": self.ds_chief.address.address,
+                "MCD_ESM": self.esm.address.address,
+                "MCD_END": self.end.address.address,
+                "PROXY_REGISTRY": self.proxy_registry.address.address,
+                "PROXY_ACTIONS_DSR": self.dss_proxy_actions.address.address,
             }
 
             for collateral in self.collaterals.values():
-                match = re.search(r'(\w+)(?:-\w+)?', collateral.ilk.name)
-                name = (collateral.ilk.name.replace('-', '_'), match.group(1))
+                match = re.search(r"(\w+)(?:-\w+)?", collateral.ilk.name)
+                name = (collateral.ilk.name.replace("-", "_"), match.group(1))
                 conf_dict[name[1]] = collateral.gem.address.address
                 if collateral.pip:
-                    conf_dict[f'PIP_{name[1]}'] = collateral.pip.address.address
-                conf_dict[f'MCD_JOIN_{name[0]}'] = collateral.adapter.address.address
-                conf_dict[f'MCD_FLIP_{name[0]}'] = collateral.flipper.address.address
+                    conf_dict[f"PIP_{name[1]}"] = collateral.pip.address.address
+                conf_dict[f"MCD_JOIN_{name[0]}"] = collateral.adapter.address.address
+                conf_dict[f"MCD_FLIP_{name[0]}"] = collateral.flipper.address.address
 
             return conf_dict
 
@@ -349,8 +408,7 @@ class DssDeployment:
         assert isinstance(network, str)
 
         cwd = os.path.dirname(os.path.realpath(__file__))
-        addresses_path = os.path.join(
-            cwd, "../config", f"{network}-addresses.json")
+        addresses_path = os.path.join(cwd, "../config", f"{network}-addresses.json")
 
         return DssDeployment.from_json(web3=web3, conf=open(addresses_path, "r").read())
 
@@ -363,12 +421,14 @@ class DssDeployment:
         """
         assert isinstance(usr, Address)
 
-        gas_price = kwargs['gas_price'] if 'gas_price' in kwargs else DefaultGasPrice(
+        gas_price = kwargs["gas_price"] if "gas_price" in kwargs else DefaultGasPrice()
+        self.dai_adapter.approve(
+            approval_function=hope_directly(from_address=usr, gas_price=gas_price),
+            source=self.vat.address,
         )
-        self.dai_adapter.approve(approval_function=hope_directly(from_address=usr, gas_price=gas_price),
-                                 source=self.vat.address)
         self.dai.approve(self.dai_adapter.address).transact(
-            from_address=usr, gas_price=gas_price)
+            from_address=usr, gas_price=gas_price
+        )
 
     def active_auctions(self) -> dict:
         flips = {}
@@ -379,8 +439,8 @@ class DssDeployment:
         return {
             "flips": flips,
             "flaps": self.flapper.active_auctions(),
-            "flops": self.flopper.active_auctions()
+            "flops": self.flopper.active_auctions(),
         }
 
     def __repr__(self):
-        return f'DssDeployment({self.config.to_json()})'
+        return f"DssDeployment({self.config.to_json()})"

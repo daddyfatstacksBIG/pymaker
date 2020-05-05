@@ -30,16 +30,16 @@ from pymaker.keys import register_keys
 from pymaker.numeric import Wad
 
 logging.basicConfig(
-    format='%(asctime)-15s %(levelname)-8s %(message)s', level=logging.DEBUG)
+    format="%(asctime)-15s %(levelname)-8s %(message)s", level=logging.DEBUG
+)
 # reduce logspew
-logging.getLogger('urllib3').setLevel(logging.INFO)
+logging.getLogger("urllib3").setLevel(logging.INFO)
 logging.getLogger("web3").setLevel(logging.INFO)
 logging.getLogger("asyncio").setLevel(logging.INFO)
 logging.getLogger("requests").setLevel(logging.INFO)
 
 endpoint_uri = f"https://localhost:8545"
-web3 = Web3(HTTPProvider(endpoint_uri=endpoint_uri,
-                         request_kwargs={"timeout": 60}))
+web3 = Web3(HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs={"timeout": 60}))
 # ex: 0x0000000000000000000000000000000aBcdef123
 web3.eth.defaultAccount = sys.argv[1]
 # ex: key_file=~keys/default-account.json,pass_file=~keys/default-account.pass
@@ -48,7 +48,7 @@ register_keys(web3, [sys.argv[2]])
 mcd = DssDeployment.from_node(web3)
 our_address = Address(web3.eth.defaultAccount)
 
-collateral = mcd.collaterals['ETH-A']
+collateral = mcd.collaterals["ETH-A"]
 ilk = collateral.ilk
 collateral.approve(our_address)
 
@@ -70,15 +70,13 @@ class TestApp:
 
     def test_replacement(self):
         first_tx = collateral.adapter.join(our_address, Wad(4))
-        logging.info(
-            f"Submitting first TX with gas price deliberately too low")
-        self._run_future(first_tx.transact_async(
-            gas_price=FixedGasPrice(1000)))
+        logging.info(f"Submitting first TX with gas price deliberately too low")
+        self._run_future(first_tx.transact_async(gas_price=FixedGasPrice(1000)))
         time.sleep(2)
 
         second_tx = collateral.adapter.join(our_address, Wad(6))
         logging.info(f"Replacing first TX with legitimate gas price")
-        second_tx.transact(replace=first_tx, gas_price=FixedGasPrice(2*GWEI))
+        second_tx.transact(replace=first_tx, gas_price=FixedGasPrice(2 * GWEI))
 
         assert first_tx.replaced
 
@@ -105,5 +103,5 @@ class TestApp:
         thread.start()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     TestApp().main()

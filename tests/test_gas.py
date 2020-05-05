@@ -17,7 +17,13 @@
 
 import pytest
 
-from pymaker.gas import DefaultGasPrice, FixedGasPrice, GasPrice, GeometricGasPrice, IncreasingGasPrice
+from pymaker.gas import (
+    DefaultGasPrice,
+    FixedGasPrice,
+    GasPrice,
+    GeometricGasPrice,
+    IncreasingGasPrice,
+)
 
 
 class TestGasPrice:
@@ -167,11 +173,12 @@ class TestGeometricGasPrice:
     def test_behaves_with_realistic_values(self):
         # given
         GWEI = 1000000000
-        geometric_gas_price = GeometricGasPrice(100*GWEI, 10, 1+(0.125*2))
+        geometric_gas_price = GeometricGasPrice(100 * GWEI, 10, 1 + (0.125 * 2))
 
         for seconds in [0, 1, 10, 12, 30, 60]:
             print(
-                f"gas price after {seconds} seconds is {geometric_gas_price.get_gas_price(seconds)/GWEI}")
+                f"gas price after {seconds} seconds is {geometric_gas_price.get_gas_price(seconds)/GWEI}"
+            )
 
         assert round(geometric_gas_price.get_gas_price(0) / GWEI, 1) == 100.0
         assert round(geometric_gas_price.get_gas_price(1) / GWEI, 1) == 100.0

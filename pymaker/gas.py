@@ -78,7 +78,7 @@ class FixedGasPrice(GasPrice):
     """
 
     def __init__(self, gas_price: int):
-        assert(isinstance(gas_price, int))
+        assert isinstance(gas_price, int)
         self.gas_price = gas_price
 
     def update_gas_price(self, new_gas_price: int):
@@ -94,12 +94,12 @@ class FixedGasPrice(GasPrice):
         Args:
             new_gas_price: New gas price to be set (in Wei).
         """
-        assert(isinstance(new_gas_price, int))
+        assert isinstance(new_gas_price, int)
 
         self.gas_price = new_gas_price
 
     def get_gas_price(self, time_elapsed: int) -> Optional[int]:
-        assert(isinstance(time_elapsed, int))
+        assert isinstance(time_elapsed, int)
         return self.gas_price
 
 
@@ -117,16 +117,22 @@ class IncreasingGasPrice(GasPrice):
         max_price: Optional upper limit.
     """
 
-    def __init__(self, initial_price: int, increase_by: int, every_secs: int, max_price: Optional[int]):
-        assert(isinstance(initial_price, int))
-        assert(isinstance(increase_by, int))
-        assert(isinstance(every_secs, int))
-        assert(isinstance(max_price, int) or max_price is None)
-        assert(initial_price > 0)
-        assert(increase_by > 0)
-        assert(every_secs > 0)
+    def __init__(
+        self,
+        initial_price: int,
+        increase_by: int,
+        every_secs: int,
+        max_price: Optional[int],
+    ):
+        assert isinstance(initial_price, int)
+        assert isinstance(increase_by, int)
+        assert isinstance(every_secs, int)
+        assert isinstance(max_price, int) or max_price is None
+        assert initial_price > 0
+        assert increase_by > 0
+        assert every_secs > 0
         if max_price is not None:
-            assert(max_price > 0)
+            assert max_price > 0
 
         self.initial_price = initial_price
         self.increase_by = increase_by
@@ -134,10 +140,11 @@ class IncreasingGasPrice(GasPrice):
         self.max_price = max_price
 
     def get_gas_price(self, time_elapsed: int) -> Optional[int]:
-        assert(isinstance(time_elapsed, int))
+        assert isinstance(time_elapsed, int)
 
-        result = self.initial_price + \
-            int(time_elapsed/self.every_secs)*self.increase_by
+        result = (
+            self.initial_price + int(time_elapsed / self.every_secs) * self.increase_by
+        )
         if self.max_price is not None:
             result = min(result, self.max_price)
 
@@ -158,15 +165,21 @@ class GeometricGasPrice(GasPrice):
         max_price: Optional upper limit, defaults to None.
     """
 
-    def __init__(self, initial_price: int, every_secs: int, coefficient=1.125, max_price: Optional[int] = None):
-        assert (isinstance(initial_price, int))
-        assert (isinstance(every_secs, int))
-        assert (isinstance(max_price, int) or max_price is None)
-        assert (initial_price > 0)
-        assert (every_secs > 0)
-        assert (coefficient > 1)
+    def __init__(
+        self,
+        initial_price: int,
+        every_secs: int,
+        coefficient=1.125,
+        max_price: Optional[int] = None,
+    ):
+        assert isinstance(initial_price, int)
+        assert isinstance(every_secs, int)
+        assert isinstance(max_price, int) or max_price is None
+        assert initial_price > 0
+        assert every_secs > 0
+        assert coefficient > 1
         if max_price is not None:
-            assert(max_price > 0)
+            assert max_price > 0
 
         self.initial_price = initial_price
         self.every_secs = every_secs
@@ -174,12 +187,12 @@ class GeometricGasPrice(GasPrice):
         self.max_price = max_price
 
     def get_gas_price(self, time_elapsed: int) -> Optional[int]:
-        assert(isinstance(time_elapsed, int))
+        assert isinstance(time_elapsed, int)
 
         if time_elapsed < self.every_secs:
             return self.initial_price
         result = self.initial_price
-        for second in range(math.floor(time_elapsed/self.every_secs)):
+        for second in range(math.floor(time_elapsed / self.every_secs)):
             result *= self.coefficient
         if self.max_price is not None:
             result = min(result, self.max_price)
