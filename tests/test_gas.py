@@ -170,7 +170,8 @@ class TestGeometricGasPrice:
     def test_behaves_with_realistic_values(self):
         # given
         GWEI = 1000000000
-        geometric_gas_price = GeometricGasPrice(100 * GWEI, 10, 1 + (0.125 * 2))
+        geometric_gas_price = GeometricGasPrice(100 * GWEI, 10,
+                                                1 + (0.125 * 2))
 
         for seconds in [0, 1, 10, 12, 30, 60]:
             print(

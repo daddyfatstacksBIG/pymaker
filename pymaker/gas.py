@@ -117,11 +117,11 @@ class IncreasingGasPrice(GasPrice):
     """
 
     def __init__(
-        self,
-        initial_price: int,
-        increase_by: int,
-        every_secs: int,
-        max_price: Optional[int],
+            self,
+            initial_price: int,
+            increase_by: int,
+            every_secs: int,
+            max_price: Optional[int],
     ):
         assert isinstance(initial_price, int)
         assert isinstance(increase_by, int)
@@ -141,9 +141,8 @@ class IncreasingGasPrice(GasPrice):
     def get_gas_price(self, time_elapsed: int) -> Optional[int]:
         assert isinstance(time_elapsed, int)
 
-        result = (
-            self.initial_price + int(time_elapsed / self.every_secs) * self.increase_by
-        )
+        result = (self.initial_price +
+                  int(time_elapsed / self.every_secs) * self.increase_by)
         if self.max_price is not None:
             result = min(result, self.max_price)
 
@@ -165,11 +164,11 @@ class GeometricGasPrice(GasPrice):
     """
 
     def __init__(
-        self,
-        initial_price: int,
-        every_secs: int,
-        coefficient=1.125,
-        max_price: Optional[int] = None,
+            self,
+            initial_price: int,
+            every_secs: int,
+            coefficient=1.125,
+            max_price: Optional[int] = None,
     ):
         assert isinstance(initial_price, int)
         assert isinstance(every_secs, int)

@@ -32,28 +32,26 @@ class Token:
         self.address = address
         self.decimals = decimals
 
-        self.min_amount = Wad.from_number(10 ** -self.decimals)
+        self.min_amount = Wad.from_number(10**-self.decimals)
 
     def normalize_amount(self, amount: Wad) -> Wad:
         assert isinstance(amount, Wad)
 
-        return amount * Wad.from_number(10 ** (18 - self.decimals))
+        return amount * Wad.from_number(10**(18 - self.decimals))
 
     def unnormalize_amount(self, amount: Wad) -> Wad:
         assert isinstance(amount, Wad)
 
-        return amount * Wad.from_number(10 ** (self.decimals - 18))
+        return amount * Wad.from_number(10**(self.decimals - 18))
 
     def is_eth(self) -> bool:
-        return self.address == Address("0x0000000000000000000000000000000000000000")
+        return self.address == Address(
+            "0x0000000000000000000000000000000000000000")
 
     def __eq__(self, other):
         assert isinstance(other, Token)
-        return (
-            self.name == other.name
-            and self.address == other.address
-            and self.decimals == other.decimals
-        )
+        return (self.name == other.name and self.address == other.address
+                and self.decimals == other.decimals)
 
     def __hash__(self):
         return hash((self.name, self.address, self.decimals))

@@ -27,17 +27,17 @@ def chain(web3: Web3) -> str:
     block_0 = web3.eth.getBlock(0)["hash"]
     if block_0 == "0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3":
         return "ethlive"
-    elif (
-        block_0 == "0xa3c565fc15c7478862d50ccd6561e3c06b24cc509bf388941c25ea985ce32cb9"
-    ):
+    elif (block_0 ==
+          "0xa3c565fc15c7478862d50ccd6561e3c06b24cc509bf388941c25ea985ce32cb9"
+          ):
         return "kovan"
-    elif (
-        block_0 == "0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"
-    ):
+    elif (block_0 ==
+          "0x41941023680923e0fe4d74a34bdac8141f2540e3ae90623718e47d66d1ca4a2d"
+          ):
         return "ropsten"
-    elif (
-        block_0 == "0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303"
-    ):
+    elif (block_0 ==
+          "0x0cd786a2425d16f152c658316c423e6ce1181e15c3295826d7c9904cba9ce303"
+          ):
         return "morden"
     else:
         return "unknown"
@@ -66,13 +66,8 @@ def eth_balance(web3: Web3, address) -> Wad:
 
 def is_contract_at(web3: Web3, address):
     code = web3.eth.getCode(address.address)
-    return (
-        (code is not None)
-        and (code != "0x")
-        and (code != "0x0")
-        and (code != b"\x00")
-        and (code != b"")
-    )
+    return ((code is not None) and (code != "0x") and (code != "0x0")
+            and (code != b"\x00") and (code != b""))
 
 
 def int_to_bytes32(value: int) -> bytes:
@@ -160,7 +155,8 @@ class AsyncCallback:
             except Exception as e:
                 self.thread = None
 
-                logging.critical(f"Failed to start the async callback thread ({e})")
+                logging.critical(
+                    f"Failed to start the async callback thread ({e})")
 
             return True
         else:

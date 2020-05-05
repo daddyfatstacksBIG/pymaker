@@ -66,9 +66,9 @@ from pymaker.token import DSToken
 from pymaker.vault import DSVault
 
 
-def deploy_contract(
-    web3: Web3, contract_name: str, args: Optional[list] = None
-) -> Address:
+def deploy_contract(web3: Web3,
+                    contract_name: str,
+                    args: Optional[list] = None) -> Address:
     """Deploys a new contract.
 
     Args:
@@ -84,18 +84,19 @@ def deploy_contract(
     assert isinstance(args, list) or (args is None)
 
     abi = json.loads(
-        pkg_resources.resource_string("pymaker.deployment", f"abi/{contract_name}.abi")
-    )
+        pkg_resources.resource_string("pymaker.deployment",
+                                      f"abi/{contract_name}.abi"))
     bytecode = str(
-        pkg_resources.resource_string("pymaker.deployment", f"abi/{contract_name}.bin"),
+        pkg_resources.resource_string("pymaker.deployment",
+                                      f"abi/{contract_name}.bin"),
         "utf-8",
     )
     if args is not None:
-        tx_hash = (
-            web3.eth.contract(abi=abi, bytecode=bytecode).constructor(*args).transact()
-        )
+        tx_hash = (web3.eth.contract(
+            abi=abi, bytecode=bytecode).constructor(*args).transact())
     else:
-        tx_hash = web3.eth.contract(abi=abi, bytecode=bytecode).constructor().transact()
+        tx_hash = web3.eth.contract(
+            abi=abi, bytecode=bytecode).constructor().transact()
     receipt = web3.eth.getTransactionReceipt(tx_hash)
     return Address(receipt["contractAddress"])
 
@@ -144,7 +145,8 @@ class Deployment:
             web3,
             admin=Address("0x1111100000999998888877777666665555544444"),
             fee_account=Address("0x8888877777666665555544444111110000099999"),
-            account_levels_addr=Address("0x0000000000000000000000000000000000000000"),
+            account_levels_addr=Address(
+                "0x0000000000000000000000000000000000000000"),
             fee_make=Wad.from_number(0.01),
             fee_take=Wad.from_number(0.02),
             fee_rebate=Wad.from_number(0.03),
@@ -186,7 +188,8 @@ class Deployment:
     def reset(self):
         """Rollbacks all changes made since the initial deployment."""
         self.web3.manager.request_blocking("evm_revert", [self.snapshot_id])
-        self.snapshot_id = self.web3.manager.request_blocking("evm_snapshot", [])
+        self.snapshot_id = self.web3.manager.request_blocking(
+            "evm_snapshot", [])
 
     def time_travel_by(self, seconds: int):
         assert isinstance(seconds, int)
@@ -204,26 +207,26 @@ class DssDeployment:
 
     class Config:
         def __init__(
-            self,
-            pause: DSPause,
-            vat: Vat,
-            vow: Vow,
-            jug: Jug,
-            cat: Cat,
-            flapper: Flapper,
-            flopper: Flopper,
-            pot: Pot,
-            dai: DSToken,
-            dai_join: DaiJoin,
-            mkr: DSToken,
-            spotter: Spotter,
-            ds_chief: DSChief,
-            esm: ShutdownModule,
-            end: End,
-            proxy_registry: ProxyRegistry,
-            dss_proxy_actions: DssProxyActionsDsr,
-            cdp_manager: CdpManager,
-            collaterals: Optional[Dict[str, Collateral]] = None,
+                self,
+                pause: DSPause,
+                vat: Vat,
+                vow: Vow,
+                jug: Jug,
+                cat: Cat,
+                flapper: Flapper,
+                flopper: Flopper,
+                pot: Pot,
+                dai: DSToken,
+                dai_join: DaiJoin,
+                mkr: DSToken,
+                spotter: Spotter,
+                ds_chief: DSChief,
+                esm: ShutdownModule,
+                end: End,
+                proxy_registry: ProxyRegistry,
+                dss_proxy_actions: DssProxyActionsDsr,
+                cdp_manager: CdpManager,
+                collaterals: Optional[Dict[str, Collateral]] = None,
         ):
             self.pause = pause
             self.vat = vat
@@ -263,16 +266,15 @@ class DssDeployment:
             ds_chief = DSChief(web3, Address(conf["MCD_ADM"]))
             esm = ShutdownModule(web3, Address(conf["MCD_ESM"]))
             end = End(web3, Address(conf["MCD_END"]))
-            proxy_registry = ProxyRegistry(web3, Address(conf["PROXY_REGISTRY"]))
+            proxy_registry = ProxyRegistry(web3,
+                                           Address(conf["PROXY_REGISTRY"]))
             dss_proxy_actions = DssProxyActionsDsr(
-                web3, Address(conf["PROXY_ACTIONS_DSR"])
-            )
+                web3, Address(conf["PROXY_ACTIONS_DSR"]))
             cdp_manager = CdpManager(web3, Address(conf["CDP_MANAGER"]))
 
             collaterals = {}
             for name in DssDeployment.Config._infer_collaterals_from_addresses(
-                conf.keys()
-            ):
+                    conf.keys()):
                 ilk = Ilk(name[0].replace("_", "-"))
                 if name[1] == "ETH":
                     gem = DSEthToken(web3, Address(conf[name[1]]))
@@ -280,13 +282,16 @@ class DssDeployment:
                     gem = DSToken(web3, Address(conf[name[1]]))
 
                 if name[1] in ["USDC", "WBTC"]:
-                    adapter = GemJoin5(web3, Address(conf[f"MCD_JOIN_{name[0]}"]))
+                    adapter = GemJoin5(web3,
+                                       Address(conf[f"MCD_JOIN_{name[0]}"]))
                 else:
-                    adapter = GemJoin(web3, Address(conf[f"MCD_JOIN_{name[0]}"]))
+                    adapter = GemJoin(web3,
+                                      Address(conf[f"MCD_JOIN_{name[0]}"]))
 
                 # PIP contract may be a DSValue, OSM, or bogus address.
                 pip_address = Address(conf[f"PIP_{name[1]}"])
-                network = DssDeployment.NETWORKS.get(web3.net.version, "testnet")
+                network = DssDeployment.NETWORKS.get(web3.net.version,
+                                                     "testnet")
                 if network == "testnet":
                     pip = DSValue(web3, pip_address)
                 else:
@@ -296,7 +301,8 @@ class DssDeployment:
                     ilk=ilk,
                     gem=gem,
                     adapter=adapter,
-                    flipper=Flipper(web3, Address(conf[f"MCD_FLIP_{name[0]}"])),
+                    flipper=Flipper(web3,
+                                    Address(conf[f"MCD_FLIP_{name[0]}"])),
                     pip=pip,
                 )
                 collaterals[ilk.name] = collateral
@@ -363,9 +369,12 @@ class DssDeployment:
                 name = (collateral.ilk.name.replace("-", "_"), match.group(1))
                 conf_dict[name[1]] = collateral.gem.address.address
                 if collateral.pip:
-                    conf_dict[f"PIP_{name[1]}"] = collateral.pip.address.address
-                conf_dict[f"MCD_JOIN_{name[0]}"] = collateral.adapter.address.address
-                conf_dict[f"MCD_FLIP_{name[0]}"] = collateral.flipper.address.address
+                    conf_dict[
+                        f"PIP_{name[1]}"] = collateral.pip.address.address
+                conf_dict[
+                    f"MCD_JOIN_{name[0]}"] = collateral.adapter.address.address
+                conf_dict[
+                    f"MCD_FLIP_{name[0]}"] = collateral.flipper.address.address
 
             return conf_dict
 
@@ -419,9 +428,11 @@ class DssDeployment:
         assert isinstance(network, str)
 
         cwd = os.path.dirname(os.path.realpath(__file__))
-        addresses_path = os.path.join(cwd, "../config", f"{network}-addresses.json")
+        addresses_path = os.path.join(cwd, "../config",
+                                      f"{network}-addresses.json")
 
-        return DssDeployment.from_json(web3=web3, conf=open(addresses_path, "r").read())
+        return DssDeployment.from_json(web3=web3,
+                                       conf=open(addresses_path, "r").read())
 
     def approve_dai(self, usr: Address, **kwargs):
         """
@@ -432,14 +443,15 @@ class DssDeployment:
         """
         assert isinstance(usr, Address)
 
-        gas_price = kwargs["gas_price"] if "gas_price" in kwargs else DefaultGasPrice()
+        gas_price = kwargs[
+            "gas_price"] if "gas_price" in kwargs else DefaultGasPrice()
         self.dai_adapter.approve(
-            approval_function=hope_directly(from_address=usr, gas_price=gas_price),
+            approval_function=hope_directly(from_address=usr,
+                                            gas_price=gas_price),
             source=self.vat.address,
         )
         self.dai.approve(self.dai_adapter.address).transact(
-            from_address=usr, gas_price=gas_price
-        )
+            from_address=usr, gas_price=gas_price)
 
     def active_auctions(self) -> dict:
         flips = {}

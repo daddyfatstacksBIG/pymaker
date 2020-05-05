@@ -27,9 +27,8 @@ from pymaker.keys import register_keys
 from pymaker.lifecycle import Lifecycle
 from pymaker.numeric import Wad
 
-logging.basicConfig(
-    format="%(asctime)-15s %(levelname)-8s %(message)s", level=logging.DEBUG
-)
+logging.basicConfig(format="%(asctime)-15s %(levelname)-8s %(message)s",
+                    level=logging.DEBUG)
 # reduce logspew
 logging.getLogger("urllib3").setLevel(logging.INFO)
 logging.getLogger("web3").setLevel(logging.INFO)
@@ -37,7 +36,8 @@ logging.getLogger("asyncio").setLevel(logging.INFO)
 logging.getLogger("requests").setLevel(logging.INFO)
 
 endpoint_uri = sys.argv[1]  # ex: https://localhost:8545
-web3 = Web3(HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs={"timeout": 30}))
+web3 = Web3(
+    HTTPProvider(endpoint_uri=endpoint_uri, request_kwargs={"timeout": 30}))
 # ex: 0x0000000000000000000000000000000aBcdef123
 web3.eth.defaultAccount = sys.argv[2]
 # ex: key_file=~keys/default-account.json,pass_file=~keys/default-account.pass
@@ -63,16 +63,19 @@ class TestApp:
             lifecycle.on_block(self.on_block)
 
     def on_block(self):
-        logging.info(f"Found new block, joining {self.amount} {ilk.name}  to our urn")
+        logging.info(
+            f"Found new block, joining {self.amount} {ilk.name}  to our urn")
         collateral.gem.deposit(self.amount).transact()
         assert collateral.adapter.join(our_address, self.amount).transact()
         self.joined += self.amount
-        logging.info(f"Urn balance is {mcd.vat.gem(ilk, our_address)} {ilk.name}")
+        logging.info(
+            f"Urn balance is {mcd.vat.gem(ilk, our_address)} {ilk.name}")
         self.request_history()
 
     def request_history(self):
         logs = mcd.vat.past_frobs(past_blocks)
-        logging.info(f"Found {len(logs)} frobs in the past {past_blocks} blocks")
+        logging.info(
+            f"Found {len(logs)} frobs in the past {past_blocks} blocks")
 
     def on_shutdown(self):
         if self.joined > Wad(0):
