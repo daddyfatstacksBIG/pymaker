@@ -14,13 +14,13 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import asyncio
 import logging
 import threading
 
-from pymaker.numeric import Wad
 from web3 import Web3
+
+from pymaker.numeric import Wad
 
 
 def chain(web3: Web3) -> str:

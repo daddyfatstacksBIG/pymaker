@@ -14,25 +14,34 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import logging
 from collections import defaultdict
 from datetime import datetime
 from pprint import pformat
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from eth_abi.codec import ABICodec
 from eth_abi.registry import registry as default_registry
 from hexbytes import HexBytes
-from pymaker import Address, Contract, Transact
-from pymaker.approval import directly, hope_directly
-from pymaker.auctions import Flapper, Flipper, Flopper
-from pymaker.gas import DefaultGasPrice
-from pymaker.logging import LogNote
-from pymaker.numeric import Rad, Ray, Wad
-from pymaker.token import DSToken, ERC20Token
 from web3 import Web3
 from web3._utils.events import get_event_data
+
+from pymaker import Address
+from pymaker import Contract
+from pymaker import Transact
+from pymaker.approval import directly
+from pymaker.approval import hope_directly
+from pymaker.auctions import Flapper
+from pymaker.auctions import Flipper
+from pymaker.auctions import Flopper
+from pymaker.gas import DefaultGasPrice
+from pymaker.logging import LogNote
+from pymaker.numeric import Rad
+from pymaker.numeric import Ray
+from pymaker.numeric import Wad
+from pymaker.token import DSToken
+from pymaker.token import ERC20Token
 
 logger = logging.getLogger()
 

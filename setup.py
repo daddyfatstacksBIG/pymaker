@@ -5,11 +5,11 @@ https://packaging.python.org/guides/distributing-packages-using-setuptools/
 https://github.com/pypa/sampleproject
 https://github.com/pypa/sampleproject/blob/master/setup.py
 """
-
 from os import path
 
+from setuptools import find_packages
+from setuptools import setup
 # Always prefer setuptools over distutils
-from setuptools import find_packages, setup
 
 here = path.abspath(path.dirname(__file__))
 

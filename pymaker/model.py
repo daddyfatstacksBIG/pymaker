@@ -14,9 +14,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from pprint import pformat
-from typing import List, Optional
+from typing import List
+from typing import Optional
 
 from pymaker import Address
 from pymaker.numeric import Wad

@@ -14,31 +14,36 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import asyncio
 import json
 import logging
 import re
 import sys
 import time
-from enum import Enum, auto
-from functools import total_ordering, wraps
+from enum import auto
+from enum import Enum
+from functools import total_ordering
+from functools import wraps
 from threading import Lock
 from typing import Optional
 
-import pkg_resources
-
 import eth_utils
+import pkg_resources
 from eth_abi.codec import ABICodec
 from eth_abi.registry import registry as default_registry
 from hexbytes import HexBytes
-from pymaker.gas import DefaultGasPrice, GasPrice
-from pymaker.numeric import Wad
-from pymaker.util import bytes_to_hexstring, is_contract_at, synchronize
 from web3 import Web3
-from web3._utils.contracts import encode_abi, get_function_info
+from web3._utils.contracts import encode_abi
+from web3._utils.contracts import get_function_info
 from web3._utils.events import get_event_data
 from web3.exceptions import TransactionNotFound
+
+from pymaker.gas import DefaultGasPrice
+from pymaker.gas import GasPrice
+from pymaker.numeric import Wad
+from pymaker.util import bytes_to_hexstring
+from pymaker.util import is_contract_at
+from pymaker.util import synchronize
 
 filter_threads = []
 node_is_parity = None

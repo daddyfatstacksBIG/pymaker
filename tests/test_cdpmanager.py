@@ -14,10 +14,11 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from pymaker import Address
-from pymaker.cdpmanager import CdpManager, Urn
-from tests.conftest import mcd, web3
+from pymaker.cdpmanager import CdpManager
+from pymaker.cdpmanager import Urn
+from tests.conftest import mcd
+from tests.conftest import web3
 
 
 class TestCdpManager:

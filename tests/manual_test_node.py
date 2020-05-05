@@ -14,17 +14,18 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import logging
 import os
 import sys
+
+from web3 import HTTPProvider
+from web3 import Web3
 
 from pymaker import Address
 from pymaker.deployment import DssDeployment
 from pymaker.keys import register_keys
 from pymaker.lifecycle import Lifecycle
 from pymaker.numeric import Wad
-from web3 import HTTPProvider, Web3
 
 logging.basicConfig(
     format="%(asctime)-15s %(levelname)-8s %(message)s", level=logging.DEBUG

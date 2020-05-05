@@ -14,34 +14,56 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 import json
 import os
 import re
-from typing import Dict, List, Optional
+from typing import Dict
+from typing import List
+from typing import Optional
 
 import pkg_resources
+from web3 import HTTPProvider
+from web3 import Web3
 
 from pymaker import Address
-from pymaker.approval import directly, hope_directly
-from pymaker.auctions import Flapper, Flipper, Flopper
+from pymaker.approval import directly
+from pymaker.approval import hope_directly
+from pymaker.auctions import Flapper
+from pymaker.auctions import Flipper
+from pymaker.auctions import Flopper
 from pymaker.auth import DSGuard
 from pymaker.cdpmanager import CdpManager
-from pymaker.dss import (Cat, Collateral, DaiJoin, GemJoin, GemJoin5, Ilk, Jug,
-                         Pot, Spotter, Vat, Vow)
+from pymaker.dss import Cat
+from pymaker.dss import Collateral
+from pymaker.dss import DaiJoin
+from pymaker.dss import GemJoin
+from pymaker.dss import GemJoin5
+from pymaker.dss import Ilk
+from pymaker.dss import Jug
+from pymaker.dss import Pot
+from pymaker.dss import Spotter
+from pymaker.dss import Vat
+from pymaker.dss import Vow
 from pymaker.etherdelta import EtherDelta
 from pymaker.feed import DSValue
 from pymaker.gas import DefaultGasPrice
-from pymaker.governance import DSChief, DSPause
-from pymaker.numeric import Ray, Wad
+from pymaker.governance import DSChief
+from pymaker.governance import DSPause
+from pymaker.numeric import Ray
+from pymaker.numeric import Wad
 from pymaker.oasis import MatchingMarket
 from pymaker.oracles import OSM
-from pymaker.proxy import DssProxyActionsDsr, ProxyRegistry
-from pymaker.sai import Tap, Top, Tub, Vox
-from pymaker.shutdown import End, ShutdownModule
-from pymaker.token import DSEthToken, DSToken
+from pymaker.proxy import DssProxyActionsDsr
+from pymaker.proxy import ProxyRegistry
+from pymaker.sai import Tap
+from pymaker.sai import Top
+from pymaker.sai import Tub
+from pymaker.sai import Vox
+from pymaker.shutdown import End
+from pymaker.shutdown import ShutdownModule
+from pymaker.token import DSEthToken
+from pymaker.token import DSToken
 from pymaker.vault import DSVault
-from web3 import HTTPProvider, Web3
 
 
 def deploy_contract(
