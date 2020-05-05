@@ -76,6 +76,7 @@ class FixedGasPrice(GasPrice):
     Attributes:
         gas_price: Gas price to be used (in Wei).
     """
+
     def __init__(self, gas_price: int):
         assert(isinstance(gas_price, int))
         self.gas_price = gas_price
@@ -115,6 +116,7 @@ class IncreasingGasPrice(GasPrice):
         every_secs: Gas price increase interval (in seconds).
         max_price: Optional upper limit.
     """
+
     def __init__(self, initial_price: int, increase_by: int, every_secs: int, max_price: Optional[int]):
         assert(isinstance(initial_price, int))
         assert(isinstance(increase_by, int))
@@ -134,7 +136,8 @@ class IncreasingGasPrice(GasPrice):
     def get_gas_price(self, time_elapsed: int) -> Optional[int]:
         assert(isinstance(time_elapsed, int))
 
-        result = self.initial_price + int(time_elapsed/self.every_secs)*self.increase_by
+        result = self.initial_price + \
+            int(time_elapsed/self.every_secs)*self.increase_by
         if self.max_price is not None:
             result = min(result, self.max_price)
 
@@ -154,6 +157,7 @@ class GeometricGasPrice(GasPrice):
         coefficient: Gas price multiplier, defaults to 1.125.
         max_price: Optional upper limit, defaults to None.
     """
+
     def __init__(self, initial_price: int, every_secs: int, coefficient=1.125, max_price: Optional[int] = None):
         assert (isinstance(initial_price, int))
         assert (isinstance(every_secs, int))

@@ -113,6 +113,7 @@ class AsyncCallback:
     Attributes:
         callback: The callback function to be invoked in a separate thread.
     """
+
     def __init__(self, callback):
         self.callback = callback
         self.thread = None
@@ -147,7 +148,8 @@ class AsyncCallback:
             except Exception as e:
                 self.thread = None
 
-                logging.critical(f"Failed to start the async callback thread ({e})")
+                logging.critical(
+                    f"Failed to start the async callback thread ({e})")
 
             return True
         else:

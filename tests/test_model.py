@@ -21,7 +21,8 @@ from pymaker.model import Token
 
 class TestToken:
     def setup_class(self):
-        self.token = Token("COW", Address('0xbeef00000000000000000000000000000000BEEF'), 4)
+        self.token = Token("COW", Address(
+            '0xbeef00000000000000000000000000000000BEEF'), 4)
 
     def test_convert(self):
         # two
@@ -40,6 +41,9 @@ class TestToken:
         assert Wad.from_number(0.0004) > self.token.min_amount
         assert Wad.from_number(0.00005) < self.token.min_amount
 
-        assert self.token.unnormalize_amount(Wad.from_number(0.0006)) > self.token.unnormalize_amount(self.token.min_amount)
-        assert self.token.unnormalize_amount(Wad.from_number(0.00007)) < self.token.unnormalize_amount(self.token.min_amount)
-        assert self.token.unnormalize_amount(Wad.from_number(0.00008)) == Wad(0)
+        assert self.token.unnormalize_amount(Wad.from_number(
+            0.0006)) > self.token.unnormalize_amount(self.token.min_amount)
+        assert self.token.unnormalize_amount(Wad.from_number(
+            0.00007)) < self.token.unnormalize_amount(self.token.min_amount)
+        assert self.token.unnormalize_amount(
+            Wad.from_number(0.00008)) == Wad(0)

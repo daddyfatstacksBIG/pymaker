@@ -1,5 +1,5 @@
 # This file is part of Maker Keeper Framework.
-# 
+#
 # Copyright (C) 2017-2018 mitakash
 #
 # This program is free software: you can redistribute it and/or modify
@@ -50,8 +50,8 @@ class Token:
     def __eq__(self, other):
         assert(isinstance(other, Token))
         return self.name == other.name and \
-               self.address == other.address and \
-               self.decimals == other.decimals
+            self.address == other.address and \
+            self.decimals == other.decimals
 
     def __hash__(self):
         return hash((self.name, self.address, self.decimals))
